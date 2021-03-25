@@ -8,12 +8,12 @@ package types
 //
 // http://spec.graphql.org/draft/#sec-Scalars
 type ScalarTypeDefinition struct {
-	Name       string
+	Name       Ident
 	Desc       string
 	Directives DirectiveList
 }
 
 func (*ScalarTypeDefinition) Kind() string          { return "SCALAR" }
-func (t *ScalarTypeDefinition) String() string      { return t.Name }
-func (t *ScalarTypeDefinition) TypeName() string    { return t.Name }
+func (t *ScalarTypeDefinition) String() string      { return t.Name.Name }
+func (t *ScalarTypeDefinition) TypeName() string    { return t.Name.Name }
 func (t *ScalarTypeDefinition) Description() string { return t.Desc }

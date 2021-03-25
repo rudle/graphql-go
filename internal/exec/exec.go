@@ -293,7 +293,7 @@ func (r *Request) execSelectionSet(ctx context.Context, sels []selected.Selectio
 			}
 		}
 		if !valid {
-			err := errors.Errorf("Invalid value %s.\nExpected type %s, found %s.", name, t.Name, name)
+			err := errors.Errorf("Invalid value %s.\nExpected type %s, found %s.", name, t.Name.Name, name)
 			err.Path = path.toSlice()
 			r.AddError(err)
 			out.WriteString("null")

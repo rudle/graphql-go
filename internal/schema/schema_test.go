@@ -474,7 +474,7 @@ Second line of the description.
 					"Numbered": struct{}{},
 				}
 				for _, pt := range typ.UnionMemberTypes {
-					if _, ok := posible[pt.Name]; !ok {
+					if _, ok := posible[pt.Name.Name]; !ok {
 						return fmt.Errorf("Unexpected possible type %q", pt.Name)
 					}
 				}
@@ -609,7 +609,7 @@ Second line of the description.
 					"Numbered": struct{}{},
 				}
 				for _, pt := range typ.UnionMemberTypes {
-					if _, ok := posible[pt.Name]; !ok {
+					if _, ok := posible[pt.Name.Name]; !ok {
 						return fmt.Errorf("Unexpected possible type %q", pt.Name)
 					}
 				}

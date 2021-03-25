@@ -157,13 +157,13 @@ func (b *execBuilder) makeExec(t types.Type, resolverType reflect.Type) (Resolva
 
 	switch t := t.(type) {
 	case *types.ObjectTypeDefinition:
-		return b.makeObjectExec(t.Name, t.Fields, nil, nonNull, resolverType)
+		return b.makeObjectExec(t.Name.Name, t.Fields, nil, nonNull, resolverType)
 
 	case *types.InterfaceTypeDefinition:
 		return b.makeObjectExec(t.Name, t.Fields, t.PossibleTypes, nonNull, resolverType)
 
 	case *types.Union:
-		return b.makeObjectExec(t.Name, nil, t.UnionMemberTypes, nonNull, resolverType)
+		return b.makeObjectExec(t.Name.Name, nil, t.UnionMemberTypes, nonNull, resolverType)
 	}
 
 	if !nonNull {
@@ -199,19 +199,19 @@ func makeScalarExec(t *types.ScalarTypeDefinition, resolverType reflect.Type) (R
 	implementsType := false
 	switch r := reflect.New(resolverType).Interface().(type) {
 	case *int32:
-		implementsType = t.Name == "Int"
+		implementsType = t.Name.Name == "Int"
 	case *float64:
-		implementsType = t.Name == "Float"
+		implementsType = t.Name.Name == "Float"
 	case *string:
-		implementsType = t.Name == "String"
+		implementsType = t.Name.Name == "String"
 	case *bool:
-		implementsType = t.Name == "Boolean"
+		implementsType = t.Name.Name == "Boolean"
 	case packer.Unmarshaler:
-		implementsType = r.ImplementsGraphQLType(t.Name)
+		implementsType = r.ImplementsGraphQLType(t.Name.Name)
 	}
 
 	if !implementsType {
-		return nil, fmt.Errorf("can not use %s as %s", resolverType, t.Name)
+		return nil, fmt.Errorf("can not use %s as %s", resolverType, t.Name.Name)
 	}
 	return &Scalar{}, nil
 }
@@ -266,12 +266,12 @@ func (b *execBuilder) makeObjectExec(typeName string, fields types.FieldsDefinit
 	typeAssertions := make(map[string]*TypeAssertion)
 	if !b.schema.UseFieldResolvers || resolverType.Kind() != reflect.Interface {
 		for _, impl := range possibleTypes {
-			methodIndex := findMethod(resolverType, "To"+impl.Name)
+			methodIndex := findMethod(resolverType, "To"+impl.Name.Name)
 			if methodIndex == -1 {
-				return nil, fmt.Errorf("%s does not resolve %q: missing method %q to convert to %q", resolverType, typeName, "To"+impl.Name, impl.Name)
+				return nil, fmt.Errorf("%s does not resolve %q: missing method %q to convert to %q", resolverType, typeName, "To"+impl.Name.Name, impl.Name)
 			}
 			if resolverType.Method(methodIndex).Type.NumOut() != 2 {
-				return nil, fmt.Errorf("%s does not resolve %q: method %q should return a value and a bool indicating success", resolverType, typeName, "To"+impl.Name)
+				return nil, fmt.Errorf("%s does not resolve %q: method %q should return a value and a bool indicating success", resolverType, typeName, "To"+impl.Name.Name)
 			}
 			a := &TypeAssertion{
 				MethodIndex: methodIndex,
@@ -279,7 +279,7 @@ func (b *execBuilder) makeObjectExec(typeName string, fields types.FieldsDefinit
 			if err := b.assignExec(&a.TypeExec, impl, resolverType.Method(methodIndex).Type.Out(0)); err != nil {
 				return nil, err
 			}
-			typeAssertions[impl.Name] = a
+			typeAssertions[impl.Name.Name] = a
 		}
 	}
 

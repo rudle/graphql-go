@@ -8,7 +8,7 @@ package types
 //
 // https://spec.graphql.org/draft/#sec-Objects
 type ObjectTypeDefinition struct {
-	Name       string
+	Name       Ident
 	Interfaces []*InterfaceTypeDefinition
 	Fields     FieldsDefinition
 	Desc       string
@@ -18,6 +18,6 @@ type ObjectTypeDefinition struct {
 }
 
 func (*ObjectTypeDefinition) Kind() string          { return "OBJECT" }
-func (t *ObjectTypeDefinition) String() string      { return t.Name }
-func (t *ObjectTypeDefinition) TypeName() string    { return t.Name }
+func (t *ObjectTypeDefinition) String() string      { return t.Name.Name }
+func (t *ObjectTypeDefinition) TypeName() string    { return t.Name.Name }
 func (t *ObjectTypeDefinition) Description() string { return t.Desc }

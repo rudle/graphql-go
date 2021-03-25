@@ -6,7 +6,7 @@ package types
 //
 // http://spec.graphql.org/draft/#sec-Enums
 type EnumTypeDefinition struct {
-	Name                 string
+	Name                 Ident
 	EnumValuesDefinition []*EnumValueDefinition
 	Desc                 string
 	Directives           DirectiveList
@@ -23,6 +23,6 @@ type EnumValueDefinition struct {
 }
 
 func (*EnumTypeDefinition) Kind() string          { return "ENUM" }
-func (t *EnumTypeDefinition) String() string      { return t.Name }
-func (t *EnumTypeDefinition) TypeName() string    { return t.Name }
+func (t *EnumTypeDefinition) String() string      { return t.Name.Name }
+func (t *EnumTypeDefinition) TypeName() string    { return t.Name.Name }
 func (t *EnumTypeDefinition) Description() string { return t.Desc }

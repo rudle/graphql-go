@@ -12,7 +12,7 @@ type Directive struct {
 //
 // http://spec.graphql.org/draft/#sec-Type-System.Directives
 type DirectiveDefinition struct {
-	Name      string
+	Name      Ident
 	Desc      string
 	Locations []string
 	Arguments ArgumentsDefinition

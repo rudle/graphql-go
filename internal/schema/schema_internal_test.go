@@ -49,19 +49,19 @@ func TestParseObjectDef(t *testing.T) {
 	tests := []testCase{{
 		description: "Parses type inheriting single interface",
 		definition:  "Hello implements World { field: String }",
-		expected:    &types.ObjectTypeDefinition{Name: "Hello", InterfaceNames: []string{"World"}},
+		expected:    &types.ObjectTypeDefinition{Name: types.Ident{Name: "Hello", Loc: errors.Location{Line: 1, Column: 1}}, InterfaceNames: []string{"World"}},
 	}, {
 		description: "Parses type inheriting multiple interfaces",
 		definition:  "Hello implements Wo & rld { field: String }",
-		expected:    &types.ObjectTypeDefinition{Name: "Hello", InterfaceNames: []string{"Wo", "rld"}},
+		expected:    &types.ObjectTypeDefinition{Name: types.Ident{Name: "Hello", Loc: errors.Location{Line: 1, Column: 1}}, InterfaceNames: []string{"Wo", "rld"}},
 	}, {
 		description: "Parses type inheriting multiple interfaces with leading ampersand",
 		definition:  "Hello implements & Wo & rld { field: String }",
-		expected:    &types.ObjectTypeDefinition{Name: "Hello", InterfaceNames: []string{"Wo", "rld"}},
+		expected:    &types.ObjectTypeDefinition{Name: types.Ident{Name: "Hello", Loc: errors.Location{Line: 1, Column: 1}}, InterfaceNames: []string{"Wo", "rld"}},
 	}, {
 		description: "Allows legacy SDL interfaces",
 		definition:  "Hello implements Wo, rld { field: String }",
-		expected:    &types.ObjectTypeDefinition{Name: "Hello", InterfaceNames: []string{"Wo", "rld"}},
+		expected:    &types.ObjectTypeDefinition{Name: types.Ident{Name: "Hello", Loc: errors.Location{Line: 1, Column: 1}}, InterfaceNames: []string{"Wo", "rld"}},
 	}}
 
 	for _, test := range tests {

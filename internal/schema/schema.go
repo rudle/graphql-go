@@ -97,7 +97,7 @@ func Parse(s *types.Schema, schemaString string, useStringDescriptions bool) err
 			}
 			for _, f := range intf.Fields.Names() {
 				if obj.Fields.Get(f) == nil {
-					return errors.Errorf("interface %q expects field %q but %q does not provide it", intfName, f, obj.Name)
+					return errors.Errorf("interface %q expects field %q but %q does not provide it", intfName, f, obj.Name.Name)
 				}
 			}
 			obj.Interfaces[i] = intf
@@ -168,7 +168,7 @@ func mergeExtensions(s *types.Schema) error {
 			for _, en := range e.InterfaceNames {
 				for _, on := range og.InterfaceNames {
 					if on == en {
-						return fmt.Errorf("interface %q implemented in the extension is already implemented in %q", on, og.Name)
+						return fmt.Errorf("interface %q implemented in the extension is already implemented in %q", on, og.Name.Name)
 					}
 				}
 			}
@@ -200,7 +200,7 @@ func mergeExtensions(s *types.Schema) error {
 			for _, en := range e.TypeNames {
 				for _, on := range og.TypeNames {
 					if on == en {
-						return fmt.Errorf("union type %q already declared in %q", on, og.Name)
+						return fmt.Errorf("union type %q already declared in %q", on, og.Name.Name)
 					}
 				}
 			}
@@ -212,7 +212,7 @@ func mergeExtensions(s *types.Schema) error {
 			for _, en := range e.EnumValuesDefinition {
 				for _, on := range og.EnumValuesDefinition {
 					if on.EnumValue == en.EnumValue {
-						return fmt.Errorf("enum value %q already declared in %q", on.EnumValue, og.Name)
+						return fmt.Errorf("enum value %q already declared in %q", on.EnumValue, og.Name.Name)
 					}
 				}
 			}
@@ -322,7 +322,7 @@ func parseSchema(s *types.Schema, l *common.Lexer) {
 		case "type":
 			obj := parseObjectDef(l)
 			obj.Desc = desc
-			s.Types[obj.Name] = obj
+			s.Types[obj.Name.Name] = obj
 			s.Objects = append(s.Objects, obj)
 
 		case "interface":
@@ -333,29 +333,29 @@ func parseSchema(s *types.Schema, l *common.Lexer) {
 		case "union":
 			union := parseUnionDef(l)
 			union.Desc = desc
-			s.Types[union.Name] = union
+			s.Types[union.Name.Name] = union
 			s.Unions = append(s.Unions, union)
 
 		case "enum":
 			enum := parseEnumDef(l)
 			enum.Desc = desc
-			s.Types[enum.Name] = enum
+			s.Types[enum.Name.Name] = enum
 			s.Enums = append(s.Enums, enum)
 
 		case "input":
 			input := parseInputDef(l)
 			input.Desc = desc
-			s.Types[input.Name] = input
+			s.Types[input.Name.Name] = input
 
 		case "scalar":
-			name := l.ConsumeIdent()
+			name := l.ConsumeIdentWithLoc()
 			directives := common.ParseDirectives(l)
-			s.Types[name] = &types.ScalarTypeDefinition{Name: name, Desc: desc, Directives: directives}
+			s.Types[name.Name] = &types.ScalarTypeDefinition{Name: name, Desc: desc, Directives: directives}
 
 		case "directive":
 			directive := parseDirectiveDef(l)
 			directive.Desc = desc
-			s.Directives[directive.Name] = directive
+			s.Directives[directive.Name.Name] = directive
 
 		case "extend":
 			parseExtension(s, l)
@@ -368,7 +368,7 @@ func parseSchema(s *types.Schema, l *common.Lexer) {
 }
 
 func parseObjectDef(l *common.Lexer) *types.ObjectTypeDefinition {
-	object := &types.ObjectTypeDefinition{Name: l.ConsumeIdent()}
+	object := &types.ObjectTypeDefinition{Name: l.ConsumeIdentWithLoc()}
 
 	for {
 		if l.Peek() == '{' {
@@ -415,7 +415,7 @@ func parseInterfaceDef(l *common.Lexer) *types.InterfaceTypeDefinition {
 }
 
 func parseUnionDef(l *common.Lexer) *types.Union {
-	union := &types.Union{Name: l.ConsumeIdent()}
+	union := &types.Union{Name: l.ConsumeIdentWithLoc()}
 
 	union.Directives = common.ParseDirectives(l)
 	l.ConsumeToken('=')
@@ -430,7 +430,7 @@ func parseUnionDef(l *common.Lexer) *types.Union {
 
 func parseInputDef(l *common.Lexer) *types.InputObject {
 	i := &types.InputObject{}
-	i.Name = l.ConsumeIdent()
+	i.Name = l.ConsumeIdentWithLoc()
 	i.Directives = common.ParseDirectives(l)
 	l.ConsumeToken('{')
 	for l.Peek() != '}' {
@@ -441,7 +441,7 @@ func parseInputDef(l *common.Lexer) *types.InputObject {
 }
 
 func parseEnumDef(l *common.Lexer) *types.EnumTypeDefinition {
-	enum := &types.EnumTypeDefinition{Name: l.ConsumeIdent()}
+	enum := &types.EnumTypeDefinition{Name: l.ConsumeIdentWithLoc()}
 
 	enum.Directives = common.ParseDirectives(l)
 	l.ConsumeToken('{')
@@ -459,7 +459,7 @@ func parseEnumDef(l *common.Lexer) *types.EnumTypeDefinition {
 }
 func parseDirectiveDef(l *common.Lexer) *types.DirectiveDefinition {
 	l.ConsumeToken('@')
-	d := &types.DirectiveDefinition{Name: l.ConsumeIdent()}
+	d := &types.DirectiveDefinition{Name: l.ConsumeIdentWithLoc()}
 
 	if l.Peek() == '(' {
 		l.ConsumeToken('(')

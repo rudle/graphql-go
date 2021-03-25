@@ -830,7 +830,7 @@ func validateValueType(c *opContext, v types.Value, t types.Type) (bool, string)
 func validateBasicLit(v *types.PrimitiveValue, t types.Type) bool {
 	switch t := t.(type) {
 	case *types.ScalarTypeDefinition:
-		switch t.Name {
+		switch t.Name.Name {
 		case "Int":
 			if v.Type != scanner.Int {
 				return false

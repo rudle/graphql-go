@@ -34,13 +34,13 @@ func (l InputValueDefinitionList) Get(name string) *InputValueDefinition {
 //
 // http://spec.graphql.org/draft/#sec-Input-Objects
 type InputObject struct {
-	Name       string
+	Name       Ident
 	Desc       string
 	Values     ArgumentsDefinition
 	Directives DirectiveList
 }
 
 func (*InputObject) Kind() string          { return "INPUT_OBJECT" }
-func (t *InputObject) String() string      { return t.Name }
-func (t *InputObject) TypeName() string    { return t.Name }
+func (t *InputObject) String() string      { return t.Name.Name }
+func (t *InputObject) TypeName() string    { return t.Name.Name }
 func (t *InputObject) Description() string { return t.Desc }

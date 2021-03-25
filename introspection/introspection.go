@@ -289,7 +289,7 @@ type Directive struct {
 }
 
 func (r *Directive) Name() string {
-	return r.directive.Name
+	return r.directive.Name.Name
 }
 
 func (r *Directive) Description() *string {

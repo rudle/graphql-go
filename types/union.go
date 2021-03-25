@@ -8,7 +8,7 @@ package types
 //
 // http://spec.graphql.org/draft/#sec-Unions
 type Union struct {
-	Name             string
+	Name             Ident
 	UnionMemberTypes []*ObjectTypeDefinition
 	Desc             string
 	Directives       DirectiveList
@@ -16,6 +16,6 @@ type Union struct {
 }
 
 func (*Union) Kind() string          { return "UNION" }
-func (t *Union) String() string      { return t.Name }
-func (t *Union) TypeName() string    { return t.Name }
+func (t *Union) String() string      { return t.Name.Name }
+func (t *Union) TypeName() string    { return t.Name.Name }
 func (t *Union) Description() string { return t.Desc }

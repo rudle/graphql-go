@@ -189,11 +189,11 @@ func applyFragment(r *Request, s *resolvable.Schema, e *resolvable.Object, frag 
 		if ok && len(face.PossibleTypes) > 0 {
 			sels := []Selection{}
 			for _, t := range face.PossibleTypes {
-				if t.Name == e.Name {
+				if t.Name.Name == e.Name {
 					return applySelectionSet(r, s, e, frag.Selections)
 				}
 
-				if a, ok := e.TypeAssertions[t.Name]; ok {
+				if a, ok := e.TypeAssertions[t.Name.Name]; ok {
 					sels = append(sels, &TypeAssertion{
 						TypeAssertion: *a,
 						Sels:          applySelectionSet(r, s, a.TypeExec.(*resolvable.Object), frag.Selections),
